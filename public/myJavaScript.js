@@ -20,7 +20,7 @@ firebase.initializeApp(config);
 var db = firebase.database();
 var ref = db.ref('items');
 
-function saveData(data) {
+function loadMain(data) {
   let itemLoad = data.val();
   let table = document.getElementById(itemLoad.list);
   let row = table.insertRow(0);
@@ -45,11 +45,13 @@ function excludeData(data) {
   sumTotals();
 }
 
-ref.on('child_added', saveData, function (error) {
+ref.on('value', function(data) {
+  data.forEach(loadMain);
+}, function(error) {
   console.log("Error: " + error.code);
 });
 
-ref.on('child_removed', excludeData, function (error) {
+ref.on('child_removed', excludeData, function(error) {
   console.log("Error: " + error.code);
 });
 
@@ -97,8 +99,9 @@ real.addEventListener('input', function () {
 });
 
 const submitAdd = document.getElementById('submitAdd');
-submitAdd.addEventListener('click', addItem);
-function addItem() {
+submitAdd.addEventListener('click', updateData);
+function updateData() {
+  let keyData = ref.child('items').push().key;
   let data = {
     list: document.getElementById('selectList').value,
     item: document.getElementById('itemDesc').value,
@@ -106,13 +109,14 @@ function addItem() {
     dolarValue: (document.getElementById('dolar').value * document.getElementById('quantity').value).toFixed(2),
     reaisValue: (document.getElementById('real').value * document.getElementById('quantity').value).toFixed(2)
   }
-  ref.push(data);
+  let updates = {};
+  updates[keyData] = data;
+  ref.update(updates);
   clear();
 }
 
 const cancelAdd = document.getElementById('cancelAdd');
 cancelAdd.addEventListener('click', clear);
-
 function clear() {
   document.getElementById('itemDesc').value = '';
   document.getElementById('selectList').selectedIndex = 0;
@@ -159,9 +163,11 @@ function loadData(rowID) {
   });
 }
 
+const editBtn = document.getElementById('editBtn');
+editBtn.addEventListener('click', updateData);
+
 const delBtn = document.getElementById('delBtn');
 delBtn.addEventListener('click', removeRow);
-
 function removeRow(e) {
   if (confirm('Você tem certeza?')) {
     ref.on('child_added', function (data) {
