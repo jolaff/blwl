@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/css/materialize.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <title>Buy List</title>
+  <style>
+    .navbar-fixed {
+      z-index: 9999;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="navbar-fixed">
+      <nav class="light-blue lighten-1" role="navigation">
+        <div class="nav-wrapper container"><a id="logo-container" href="#" class="right brand-logo">US$ 1.00 = R$ <span id="conversion"></span></a>
+          <ul class="hide-on-med-and-down">
+            <li><a class="itemCardPanel">Item<i class="material-icons left">add_box</i></a></li>
+            <li><a class="searchPanel">Busca<i class="material-icons left">search</i></a></li>
+          </ul>
+          <ul id="nav-mobile" class="sidenav">
+            <li><a class="itemCardPanel sidenav-close">Item<i class="material-icons left">add_box</i></a></li>
+            <li><a class="searchPanel sidenav-close">Busca<i class="material-icons left">search</i></a></li>
+          </ul>
+          <a href="#" data-target="nav-mobile" class="sidenav-trigger"><i class="material-icons">menu</i></a>
+        </div>
+      </nav>
+    </div>
+  </header>
+  <div class="container">
+
+    <div class="row">
+      <form class="col s12">
+        <!-- Add Panel sector comment -->
+        <div id="addPanel" class="row card-panel hide">
+          <div class="input-field col s10">
+            <input placeholder="Descrição do item" type="text" id="description" class="validate">
+            <label for="description">Novo item</label>
+          </div>
+          <div class="input-field col s2">
+            <input type="number" min="1" value="1" id="quantity" class="validate">
+            <label for="quantity">Quantidade</label>
+          </div>
+          <div class="col s4 center-align">
+            <div class="input-field">
+              <input placeholder="Valor em Dolares" min="0" type="number" id="dolars">
+              <label for="dolars">US$ Unit.</label>
+            </div>
+          </div>
+          <div class="col s4 center-align">
+            <div class="input-field">
+              <input placeholder="Valor em Reais" min="0" type="number" id="reais">
+              <label for="reais">R$ Unit.</label>
+            </div>
+          </div>
+          <div class="input-field col s4">
+            <select id="selectList">
+              <option value="buyBody" selected>Buy List</option>
+              <option value="wishBody">Wish List</option>
+            </select>
+            <label>Selecione a lista</label>
+          </div>
+          <div class="col s12 center-align">
+            <a id="submitAdd" class="waves-effect btn-flat green">
+              <i class="material-icons left">send</i>
+              <span class="hide-on-small-only">Submit</span>
+            </a>
+            <a id="cancelAdd" class="waves-effect btn-flat red">
+              <i class="material-icons left">cancel</i>
+              <span class="hide-on-small-only">Cancel</span>
+            </a>
+          </div>
+        </div>
+
+        <div id="searchPanel" class="row card-panel valign-wrapper hide">
+          <div class="input-field col s9">
+            <input type="text" id="searchField">
+            <label for="searchField">Busca</label>
+          </div>
+          <div class="col s3 center-align">
+            <a id="cancelSearch" class="waves-effect btn-flat red">
+              <i class="material-icons left">cancel</i>
+              <span class="hide-on-small-only">Cancel</span>
+            </a>
+          </div>
+        </div>
+        
+      </form>
+    </div>
+
+    <div class="row">
+      <ul class="collapsible expandable">
+        <li class="active">
+          <div class="collapsible-header">
+            <span class="col s6">Buy List</span>
+            <span id="totalBuy" class="col s6 right-align"></span>
+          </div>
+          <div class="collapsible-body">
+            <table class="highlight">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qtd</th>
+                  <th>US$</th>
+                  <th>R$</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="buyBody">
+                <!-- This part shall be filled by JavaScript function -->
+              </tbody>
+            </table>
+          </div>
+        </li>
+        <li class="active">
+          <div class="collapsible-header">
+            <span class="col s6">Wish List</span>
+            <span id="totalWish" class="col s6 right-align"></span>
+          </div>
+          <div class="collapsible-body">
+            <table class="highlight">
+              <thead>
+                <tr>
+                  <th>Item</th>
+                  <th>Qtd</th>
+                  <th>US$</th>
+                  <th>R$</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="wishBody">
+                <!-- This part shall be filled by JavaScript function -->
+              </tbody>
+            </table>
+          </div>
+        </li>
+        <li>
+          <div class="collapsible-header light-blue lighten-1">
+            <span class="col s6">Total</span>
+            <span id="total" class="col s6 right-align"></span>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+  <script src="https://code.jquery.com/jquery-2.1.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-beta/js/materialize.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.13.0/firebase.js"></script>
+  <script src="myJavaScript.js"></script>
+</body>
+
+</html>
