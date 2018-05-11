@@ -103,8 +103,8 @@ function addItem() {
     list: document.getElementById('selectList').value,
     item: document.getElementById('itemDesc').value,
     quant: document.getElementById('quantity').value,
-    dolarValue: document.getElementById('dolar').value * document.getElementById('quantity').value,
-    reaisValue: document.getElementById('real').value * document.getElementById('quantity').value
+    dolarValue: (document.getElementById('dolar').value * document.getElementById('quantity').value).toFixed(2),
+    reaisValue: (document.getElementById('real').value * document.getElementById('quantity').value).toFixed(2)
   }
   ref.push(data);
   clear();
@@ -115,6 +115,7 @@ cancelAdd.addEventListener('click', clear);
 
 function clear() {
   document.getElementById('itemDesc').value = '';
+  document.getElementById('selectList').selectedIndex = 0;
   document.getElementById('quantity').value = '1';
   document.getElementById('dolar').value = '';
   document.getElementById('real').value = '';
@@ -132,11 +133,6 @@ function editItem(e) {
     let item = e.target;
     //console.log(item.parentNode.parentNode.parentNode.id);
     let selectList = document.getElementById('selectList');
-    let instance = M.FormSelect.getInstance(selectList);
-    
-    instance.$selectOptions[0].selected = 'false';
-    instance.$selectOptions[1].selected = 'true';
-    console.log(instance.$selectOptions);
     item.setAttribute('href', '#addModal');
     item.classList.add('modal-trigger')
     document.getElementById('delBtn').classList.remove('hide');
@@ -152,11 +148,11 @@ function loadData(rowID) {
     if (rowID === data.key) {
       document.getElementById('itemDesc').value = data.val().item;
       document.getElementById('quantity').value = data.val().quant;
-/*       if (data.val().list === 'buyList') {
+      if (data.val().list === 'buyList') {
         document.getElementById('selectList').selectedIndex = 0;
       } else {
         document.getElementById('selectList').selectedIndex = 1;
-      } */
+      }
       document.getElementById('dolar').value = data.val().dolarValue / data.val().quant;
       document.getElementById('real').value = data.val().reaisValue / data.val().quant;
     }
@@ -174,6 +170,7 @@ function removeRow(e) {
       }
     });
     sumTotals();
+    clear();
   }
 }
 
