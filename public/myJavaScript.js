@@ -100,7 +100,17 @@ real.addEventListener('input', function () {
 
 const submitAdd = document.getElementById('submitAdd');
 submitAdd.addEventListener('click', updateData);
+
+const editBtn = document.getElementById('editBtn');
+editBtn.addEventListener('click', updateData);
+
 function updateData() {
+  ref.on('value', function(data) {
+    data.forEach(function(findKey) {
+      let keyFound = findKey.key;
+      console.log(keyFound);
+    });
+  });
   let keyData = ref.child('items').push().key;
   let data = {
     list: document.getElementById('selectList').value,
@@ -162,9 +172,6 @@ function loadData(rowID) {
     }
   });
 }
-
-const editBtn = document.getElementById('editBtn');
-editBtn.addEventListener('click', updateData);
 
 const delBtn = document.getElementById('delBtn');
 delBtn.addEventListener('click', removeRow);
