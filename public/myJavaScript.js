@@ -37,6 +37,10 @@ function loadMain(data) {
   sumTotals();
 }
 
+function changeData(data) {
+  console.log(data.key);
+}
+
 function excludeData(data) {
   let itemLoad = data.val();
   let table = document.getElementById(itemLoad.list);
@@ -45,11 +49,11 @@ function excludeData(data) {
   sumTotals();
 }
 
-ref.on('value', function(data) {
-  data.forEach(loadMain);
-}, function(error) {
+ref.on('child_added', loadMain, function(error) {
   console.log("Error: " + error.code);
 });
+
+ref.on('child_changed', changeData);
 
 ref.on('child_removed', excludeData, function(error) {
   console.log("Error: " + error.code);
@@ -99,19 +103,10 @@ real.addEventListener('input', function () {
 });
 
 const submitAdd = document.getElementById('submitAdd');
-submitAdd.addEventListener('click', updateData);
-
-const editBtn = document.getElementById('editBtn');
-editBtn.addEventListener('click', updateData);
-
-function updateData() {
-  ref.on('value', function(data) {
-    data.forEach(function(findKey) {
-      let keyFound = findKey.key;
-      console.log(keyFound);
-    });
-  });
-  let keyData = ref.child('items').push().key;
+submitAdd.addEventListener('click', addData);
+function addData() {
+  let keyData;
+  keyData = ref.child('items').push().key;
   let data = {
     list: document.getElementById('selectList').value,
     item: document.getElementById('itemDesc').value,
@@ -171,6 +166,12 @@ function loadData(rowID) {
       document.getElementById('real').value = data.val().reaisValue / data.val().quant;
     }
   });
+}
+
+const editBtn = document.getElementById('editBtn');
+editBtn.addEventListener('click', editData(indexOfRow));
+function editData(row) {
+  console.log(indexOfRow);
 }
 
 const delBtn = document.getElementById('delBtn');
