@@ -38,7 +38,12 @@ function loadMain(data) {
 }
 
 function changeData(data) {
-  console.log(data.key);
+  let itemChange = data.val();
+  let row = document.getElementById(data.key);
+  let columns = row.children;
+  console.log(row.parentNode.id);
+  [].forEach.call(columns, function(el) {
+  });
 }
 
 function excludeData(data) {
@@ -53,7 +58,9 @@ ref.on('child_added', loadMain, function(error) {
   console.log("Error: " + error.code);
 });
 
-ref.on('child_changed', changeData);
+ref.on('child_changed', changeData, function(error) {
+  console.log("Error: " + error.code);
+});
 
 ref.on('child_removed', excludeData, function(error) {
   console.log("Error: " + error.code);
@@ -169,9 +176,23 @@ function loadData(rowID) {
 }
 
 const editBtn = document.getElementById('editBtn');
-editBtn.addEventListener('click', editData(indexOfRow));
-function editData(row) {
-  console.log(indexOfRow);
+editBtn.addEventListener('click', editData);
+function editData(e) {
+  ref.on('child_added', function(data) {
+    if (indexOfRow === data.key) {
+      let keyData = data.key;
+      let datas = {
+        list: document.getElementById('selectList').value,
+        item: document.getElementById('itemDesc').value,
+        quant: document.getElementById('quantity').value,
+        dolarValue: (document.getElementById('dolar').value * document.getElementById('quantity').value).toFixed(2),
+        reaisValue: (document.getElementById('real').value * document.getElementById('quantity').value).toFixed(2)
+      }
+      let updates = {};
+      updates[keyData] = datas;
+      ref.update(updates);
+    }
+  });
 }
 
 const delBtn = document.getElementById('delBtn');
