@@ -20,6 +20,14 @@ firebase.initializeApp(config);
 var db = firebase.database();
 var ref = db.ref('items');
 
+function expand(table) {
+  if (table.children.length > 0) {
+    table.parentElement.parentElement.parentElement.firstElementChild.click();
+  } else {
+    table.parentElement.parentElement.parentElement.firstElementChild.click();
+  }
+}
+
 function loadMain(data) {
   let itemLoad = data.val();
   let table = document.getElementById(itemLoad.list);
@@ -34,6 +42,7 @@ function loadMain(data) {
   editBtn.className = 'btn-small blue right edit';
   editBtn.appendChild(document.createTextNode('Edit'));
   btn.appendChild(editBtn);
+  expand(table);
   sumTotals();
 }
 
@@ -41,9 +50,25 @@ function changeData(data) {
   let itemChange = data.val();
   let row = document.getElementById(data.key);
   let columns = row.children;
-  console.log(row.parentNode.id);
-  [].forEach.call(columns, function(el) {
-  });
+  if (row.parentNode.id !== itemChange.list) {
+    const newList = itemChange.list;
+    const parentList = document.getElementById(newList);
+    const firstRow = parentList.firstElementChild;
+    parentList.insertBefore(row, firstRow);
+  }
+  if (row.firstElementChild.innerHTML !== itemChange.item) {
+    row.firstElementChild.innerHTML = itemChange.item;
+  }
+  if (row.firstElementChild.nextElementSibling.innerHTML !== itemChange.quant) {
+    row.firstElementChild.nextElementSibling.innerHTML = itemChange.quant;
+  }
+  if (row.firstElementChild.nextElementSibling.nextElementSibling.innerHTML !== itemChange.dolarValue) {
+    row.firstElementChild.nextElementSibling.nextElementSibling.innerHTML = itemChange.dolarValue;
+  }
+  if (row.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.innerHTML !== itemChange.reaisValue) {
+    row.firstElementChild.nextElementSibling.nextElementSibling.nextElementSibling.innerHTML = itemChange.reaisValue;
+  }
+  sumTotals();
 }
 
 function excludeData(data) {
@@ -51,6 +76,7 @@ function excludeData(data) {
   let table = document.getElementById(itemLoad.list);
   let rowI = document.getElementById(data.key).rowIndex;
   table.deleteRow(rowI - 1);
+  expand(table);
   sumTotals();
 }
 
@@ -140,6 +166,7 @@ function clear() {
 const tables = document.getElementsByClassName('highlight');
 [].forEach.call(tables, function (el) {
   el.addEventListener('click', editItem);
+  el.addEventListener('dblclick', makePreju);
 });
 
 var indexOfRow;
@@ -147,7 +174,6 @@ function editItem(e) {
   if (e.target.classList.contains('edit')) {
     e.preventDefault();
     let item = e.target;
-    //console.log(item.parentNode.parentNode.parentNode.id);
     let selectList = document.getElementById('selectList');
     item.setAttribute('href', '#addModal');
     item.classList.add('modal-trigger')
@@ -173,6 +199,18 @@ function loadData(rowID) {
       document.getElementById('real').value = data.val().reaisValue / data.val().quant;
     }
   });
+}
+
+function makePreju(el) {
+  const row = el.target.parentElement;
+  const parentList = document.getElementById('prejuList');
+  parentList.insertBefore(row, parentList.childNodes[0]);
+  ref.on('child_added', function(data) {
+    if (row.id === data.key) {
+      console.log(data.val().list);
+    }
+  });
+  sumTotals();
 }
 
 const editBtn = document.getElementById('editBtn');
