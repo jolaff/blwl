@@ -20,14 +20,6 @@ firebase.initializeApp(config);
 var db = firebase.database();
 var ref = db.ref('items');
 
-function expand(table) {
-  if (table.children.length > 0) {
-    table.parentElement.parentElement.parentElement.firstElementChild.click();
-  } else {
-    table.parentElement.parentElement.parentElement.firstElementChild.click();
-  }
-}
-
 function loadMain(data) {
   let itemLoad = data.val();
   let table = document.getElementById(itemLoad.list);
@@ -37,12 +29,11 @@ function loadMain(data) {
   row.insertCell(1).innerHTML = itemLoad.quant;
   row.insertCell(2).innerHTML = itemLoad.dolarValue;
   row.insertCell(3).innerHTML = itemLoad.reaisValue;
-  let btn = row.insertCell(4);
-  let editBtn = document.createElement('a');
-  editBtn.className = 'btn-small blue right edit';
-  editBtn.appendChild(document.createTextNode('Edit'));
-  btn.appendChild(editBtn);
-  expand(table);
+  //let btn = row.insertCell(4);
+  //let editBtn = document.createElement('a');
+  //editBtn.className = 'btn-small blue right edit';
+  //editBtn.appendChild(document.createTextNode('Edit'));
+  //btn.appendChild(editBtn);
   sumTotals();
 }
 
@@ -76,7 +67,6 @@ function excludeData(data) {
   let table = document.getElementById(itemLoad.list);
   let rowI = document.getElementById(data.key).rowIndex;
   table.deleteRow(rowI - 1);
-  expand(table);
   sumTotals();
 }
 
@@ -163,16 +153,19 @@ function clear() {
   document.getElementById('real').value = '';
 }
 
-const tables = document.getElementsByClassName('highlight');
-[].forEach.call(tables, function (el) {
-  el.addEventListener('click', editItem);
+const tables = document.querySelectorAll('table.highlight > tbody');
+[].forEach.call(tables, function (el, i) {
+  console.log(tables[i]);
+  let touch = new Hammer(tables[i]);
+  //el.addEventListener('click', editItem);
+  touch.on('press', editItem);
   el.addEventListener('dblclick', makePreju);
 });
 
 var indexOfRow;
 function editItem(e) {
-  if (e.target.classList.contains('edit')) {
-    e.preventDefault();
+  e.preventDefault();
+  //if (e.target.classList.contains('edit')) {
     let item = e.target;
     let selectList = document.getElementById('selectList');
     item.setAttribute('href', '#addModal');
@@ -180,9 +173,10 @@ function editItem(e) {
     document.getElementById('delBtn').classList.remove('hide');
     document.getElementById('editBtn').classList.remove('hide');
     document.getElementById('submitAdd').classList.add('hide');
-    indexOfRow = item.parentNode.parentNode.id;
+    indexOfRow = item.parentNode.id;
+    console.log(indexOfRow);
     loadData(indexOfRow);
-  }
+  //}
 }
 
 function loadData(rowID) {
@@ -207,7 +201,7 @@ function makePreju(el) {
   parentList.insertBefore(row, parentList.childNodes[0]);
   ref.on('child_added', function(data) {
     if (row.id === data.key) {
-      console.log(data.val().list);
+      ref.child(data.key).update({ list: 'prejuList' });
     }
   });
   sumTotals();
@@ -259,6 +253,9 @@ function sumTotals() {
       else if (index == 1) {
         document.getElementById('totalWish').innerHTML = 'Total: R$ 0.00';
       }
+      else if (index == 2) {
+        document.getElementById('totalPreju').innerHTML = 'Total: R$ 0.00';
+      }
     }
     else {
       if (index == 0) {
@@ -278,6 +275,14 @@ function sumTotals() {
         });
         document.getElementById('totalWish').innerHTML = 'Total: R$ ' + sum.toFixed(2);
         total += sum;
+      }
+      else if (index == 2) {
+        let sum = 0;
+        var row = childTable[index].children[1].rows;
+        [].forEach.call(row, function (el, index) {
+          sum += parseFloat(row[index].cells[3].innerText);
+        });
+        document.getElementById('totalPreju').innerHTML = 'Total: R$ ' + sum.toFixed(2);
       }
     }
   });
